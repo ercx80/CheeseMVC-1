@@ -25,17 +25,31 @@ namespace CheeseMVC.Controllers
 
         public IActionResult Add()
         {
-            return View();
+            AddCheeseViewModel addCheeseViewModel = new AddCheeseViewModel();//create a instance of the view model add cheese
+            
+            return View(addCheeseViewModel);// here i am passing the form via the view model
         }
 
         [HttpPost]
-        [Route("/Cheese/Add")]
-        public IActionResult NewCheese(string name, string description)
+        
+        public IActionResult Add(AddCheeseViewModel addCheeseViewModel)//here i recieve an addcheese viewmodel object
         {
-            // Add the new cheese to my existing cheeses
-            CheeseData.Add(new Cheese(name, description));
+            if (ModelState.IsValid)//this checks if the form state that is passed to the controller is valid. It's gotta have data
+            {
+                // Add the new cheese to my existing cheeses
+                Cheese newCheese = new Cheese
+                {
+                    Name = addCheeseViewModel.Name,
+                    Description = addCheeseViewModel.Description,
+                    Type = addCheeseViewModel.Type
+                };
 
-            return Redirect("/");
+                CheeseData.Add(newCheese);
+
+                return Redirect("/Cheese");
+            }
+            return View(addCheeseViewModel);
+            
         }
 
         public IActionResult Detail(int id)
